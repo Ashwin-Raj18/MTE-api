@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,8 +17,7 @@ public class BlackDuckController {
     private BlackDuckService blackDuckService;
 
     @GetMapping("/blackduck")
-    public ResponseEntity<?> getBlackDuckData(){
-        String token = "ODc3NThiYWUtY2Y2Ni00ZTE5LWE0ZGUtOGVlYWVjM2I0MGEwOmIxMDE3M2U5LTY0ZjYtNDM3Mi1hZmJjLTg3NWQyZDU3YWNjZg==";
+    public ResponseEntity<?> getBlackDuckData(@RequestHeader("token") String token){
         try{
             Object data = blackDuckService.getBlackDuckData(token);
             return ResponseEntity.ok(data.toString());
