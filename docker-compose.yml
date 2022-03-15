@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  mte-app:
+    depends_on:
+      - redisjson-mte
+      - grafana-mte
+    build: .
+    ports:
+      - 8095:8080
+    environment:
+      REDIS_URL: "redisjson-mte:6379"
+    networks:
+      - mte-network
+networks:
+  mte-network:
+    external: true
