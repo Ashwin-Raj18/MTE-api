@@ -15,5 +15,7 @@ public class MteProperties {
     private String redisUrl;
     private String sqUrl;
     private String sqToken;
+    private String bdUrl;
+    private String bdToken;
 
 }
