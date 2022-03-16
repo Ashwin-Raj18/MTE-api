@@ -2,40 +2,52 @@ package org.mb.mte.clientrequest;
 
 
 import org.mb.mte.repository.RedisRepository;
+import org.mb.mte.service.SonarQubeService;
 import org.mb.mte.util.JsonFormatUtil;
+import org.mb.mte.util.MteProperties;
 import org.mb.mte.util.RedisKeys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
+
 @Component
 public class SonarQubeClient {
 
     @Autowired
     RedisRepository redisRepository;
 
-    private String scBaseUrl = "https://rimini-sonar.dot.daimler.com";
-    private String scToken = "7b262d48b75b9d3686f89c5810c4f038e63ee9bd";
-    private String scMetricsUri = "api/measures/component?metricKeys=new_code_smells,new_bugs,new_vulnerabilities,ncloc,new_coverage";
-    private String scProjectsUri = "api/components/search?qualifiers=TRK";
+    @Autowired
+    MteProperties props;
+
+    @Autowired
+    SonarQubeService sqService;
+
+    private String sqMetricsUri = "api/measures/component?metricKeys=new_code_smells,new_bugs,new_vulnerabilities,ncloc,new_coverage";
+    private String sqProjectsUri = "api/components/search?qualifiers=TRK";
 
     private String webClientGet(String uri){
-        WebClient client = WebClient.create(scBaseUrl);
+        WebClient client = WebClient.create(props.getSqUrl());
         return client.get()
                 .uri(uri)
-                .headers(headers -> headers.setBasicAuth(scToken, ""))
+                .headers(headers -> headers.setBasicAuth(props.getSqToken(), ""))
                 .retrieve()
                 .bodyToMono(String.class).block();
     }
 
-    public void sqMetrics() {
-        String respose = webClientGet(scMetricsUri);
-        String scMettricJson = JsonFormatUtil.getJson(respose);
-        redisRepository.addData(RedisKeys.scMetricsKey,scMettricJson);
+    public void sqMetricsByProject() {
+        List<String> sqProjects = sqService.getSqProjects();
+        for(String proj:sqProjects){
+            String respose = webClientGet(sqMetricsUri+"&component="+proj);
+            String sqMettricJson = JsonFormatUtil.getJson(respose);
+            redisRepository.addData(RedisKeys.sqMetricsKey+"_"+proj,sqMettricJson);
+        }
     }
 
     public void sqProjects() {
-        String respose = webClientGet(scProjectsUri);
-        String scProjectsJson = JsonFormatUtil.getJson(respose);
-        redisRepository.addData(RedisKeys.scProjectsKey,scProjectsJson);
+        String respose = webClientGet(sqProjectsUri);
+        String sqProjectsJson = JsonFormatUtil.getJson(respose);
+        redisRepository.addData(RedisKeys.sqProjectsKey,sqProjectsJson);
     }
 }
