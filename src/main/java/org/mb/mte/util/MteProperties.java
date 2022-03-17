@@ -18,4 +18,7 @@ public class MteProperties {
     private String bdUrl;
     private String bdToken;
 
+    private String jiraUrl;
+    private String jiraToken;
+
 }
