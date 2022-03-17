@@ -11,6 +11,8 @@ services:
       REDIS_URL: "redisjson-mte:6379"
       SQ_URL: "https://rimini-sonar.dot.daimler.com"
       SQ_TOKEN: "7b262d48b75b9d3686f89c5810c4f038e63ee9bd"
+      JIRA_URL: "https://tweakers.atlassian.net/rest/api/3/"
+      JIRA_TOKEN: "eFZ54XDoXhxA304vtuqo0FE0"
     networks:
       - mte-network
 networks:

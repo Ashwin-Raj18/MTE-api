@@ -16,4 +16,7 @@ public class MteProperties {
     private String sqUrl;
     private String sqToken;
 
+    private String jiraUrl;
+    private String jiraToken;
+
 }
