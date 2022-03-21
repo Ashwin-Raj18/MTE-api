@@ -19,7 +19,7 @@ public class JiraClient {
         WebClient client = WebClient.create("https://tweakers.atlassian.net");
         return client.get()
                 .uri(uri)
-                .headers(headers -> headers.setBasicAuth("yourgmail.com","apiToken"))
+                .headers(headers -> headers.setBasicAuth("ashwinrajrao@gmail.com","Zqx5XPHy6zfEF5fHqK717D83"))
                 .retrieve()
                 .bodyToMono(String.class).block();
     }

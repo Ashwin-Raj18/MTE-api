@@ -1,12 +1,11 @@
-FROM openjdk:19-jdk-alpine3.15
+FROM openjdk:11
 VOLUME /tmp
 RUN java -version
-
-RUN addgroup -g 888 mte-g
+RUN addgroup --gid 888 mte_g
 #-D for user without password
-RUN adduser -u 888 -G mte-g -D mte-u
+RUN adduser --home /home/mte_u --uid 888 --gid 888 --disabled-password mte_u
 
-USER mte-u
+USER mte_u
 ADD target/mte-0.0.1.jar mte.jar
 
 ENTRYPOINT ["java","-jar","/mte.jar"]
