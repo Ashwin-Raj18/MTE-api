@@ -1,6 +1,7 @@
 package org.mb.mte.cronJobs;
 
 import org.mb.mte.clientrequest.SonarQubeClient;
+import org.mb.mte.service.BlackDuckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -12,6 +13,9 @@ public class MteJobs {
 
     @Autowired
     SonarQubeClient sonarQubeClient;
+
+    @Autowired
+    BlackDuckService blackDuckService;
 
     @Scheduled(cron = "*/50 * * * * *")
     public void mteSq() {
@@ -25,7 +29,7 @@ public class MteJobs {
     }
 
     @Scheduled(cron = "*/50 * * * * *")
-    public void mteBd() {
-
+    public void mteBd() throws Exception {
+        blackDuckService.setBdProjectsData();
     }
 }
