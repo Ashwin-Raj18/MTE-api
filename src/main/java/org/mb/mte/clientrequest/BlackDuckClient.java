@@ -1,5 +1,8 @@
 package org.mb.mte.clientrequest;
 
+import org.mb.mte.repository.RedisRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -8,6 +11,8 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class BlackDuckClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(RedisRepository.class);
 
     @Autowired
     private WebClient.Builder webClient;
@@ -35,7 +40,7 @@ public class BlackDuckClient {
         if(response.getStatusCodeValue() != 200){
             throw new Exception("error while authenticating");
         }
-        System.out.println("Authentication successful");
+        logger.info("Authentication successful");
         return response.getBody();
     }
 
@@ -54,7 +59,7 @@ public class BlackDuckClient {
         if(response.getStatusCodeValue() != 200){
             throw new Exception("error while getting list of projects");
         }
-        System.out.println("retrieved all projects");
+        logger.info("retrieved all projects");
         return response.getBody();
     }
 
@@ -71,6 +76,5 @@ public class BlackDuckClient {
                 .block();
         return response;
     }
-
 
 }
