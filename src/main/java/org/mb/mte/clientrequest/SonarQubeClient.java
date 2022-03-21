@@ -24,7 +24,7 @@ public class SonarQubeClient {
     @Autowired
     SonarQubeService sqService;
 
-    private String sqMetricsUri = "api/measures/component?metricKeys=new_code_smells,new_bugs,new_vulnerabilities,ncloc,new_coverage";
+    private String sqMetricsUri = "api/measures/component?metricKeys=code_smells,vulnerabilities,ncloc,cognitive_complexity,bugs,confirmed_issues,coverage,critical_violations,development_cost,major_violations,open_issues,security_hotspots,security_rating";
     private String sqProjectsUri = "api/components/search?qualifiers=TRK";
 
     private String webClientGet(String uri){

@@ -1,5 +1,6 @@
 package org.mb.mte.cronJobs;
 
+import org.mb.mte.clientrequest.JiraClient;
 import org.mb.mte.clientrequest.SonarQubeClient;
 import org.mb.mte.service.BlackDuckService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class MteJobs {
     SonarQubeClient sonarQubeClient;
 
     @Autowired
+    JiraClient jiraClient;
+
+    @Autowired
     BlackDuckService blackDuckService;
 
     @Scheduled(cron = "*/50 * * * * *")
@@ -23,8 +27,9 @@ public class MteJobs {
         sonarQubeClient.sqMetricsByProject();
     }
 
-    @Scheduled(cron = "*/50 * * * * *")
+//    @Scheduled(cron = "*/50 * * * * *")
     public void mteJira() {
+        jiraClient.jiraProjects();
 
     }
 
