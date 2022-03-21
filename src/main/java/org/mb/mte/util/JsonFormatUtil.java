@@ -1,9 +1,6 @@
 package org.mb.mte.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 
 public class JsonFormatUtil {
 
@@ -13,4 +10,14 @@ public class JsonFormatUtil {
         JsonElement je = JsonParser.parseString(rawData);
         return gson.toJson(je);
     }
+
+    public static JsonObject getJsonObject(String jsonData){
+        return new Gson().fromJson(jsonData, JsonObject.class);
+    }
+
+    public static String getKeyValueJsonString(String jsonData,String key){
+        return new Gson().fromJson(jsonData, JsonObject.class).get(key).getAsString();
+    }
+
+
 }
