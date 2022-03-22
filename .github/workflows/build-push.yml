@@ -31,16 +31,14 @@ jobs:
       - name: Docker Push
         run: docker push ashwinraj18/mte-api:1.0
       - name: aws deploy
-        uses: shimataro/ssh-key-action@v2
+        uses: appleboy/ssh-action@master
         with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_TWEAK_USERNAME }}
           key: ${{ secrets.AWS_TWEAK_KEY }}
-          name: per_tweak.pem
-          known_hosts: ${{ secrets.AWS_KNOWN_HOSTS }}
-      - name: aws ssh
-        working-directory: /home/runner/.ssh
-        run: |
+          port: 22
+          script: |
           ls -la
-          ssh -i "per_tweak.pem" ${{ secrets.AWS_TWEAK_USERNAME }}@${{ secrets.AWS_TWEAK_HOST }}
           sudo docker rm -f mte-app
           sudo docker rmi ashwinraj18/mte-api:1.0
           sudo docker pull ashwinraj18/mte-api:1.0
