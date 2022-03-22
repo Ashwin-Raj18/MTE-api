@@ -39,6 +39,7 @@ jobs:
       - name: aws ssh
         working-directory: /home/runner/.ssh
         run: |
+          ls -la
           ssh ${{ secrets.AWS_TWEAK_USERNAME }}@${{ secrets.AWS_TWEAK_HOST }}
           sudo docker rm -f mte-app
           sudo docker rmi ashwinraj18/mte-api:1.0
