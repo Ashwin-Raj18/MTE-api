@@ -42,5 +42,5 @@ jobs:
             sudo docker rm -f mte-app
             sudo docker rmi ashwinraj18/mte-api:1.0
             sudo docker pull ashwinraj18/mte-api:1.0
-            sudo docker run -d -p 8095:8080 --name mte-app --network mte-network -e REDIS_URL='redisjson-mte:6379' -e SQ_URL='https://rimini-sonar.dot.daimler.com' -e SQ_TOKEN='7b262d48b75b9d3686f89c5810c4f038e63ee9bd' ashwinraj18/mte-api:1.0
+            sudo docker run -d -p 8095:8080 --name mte-app --network mte-network -e REDIS_URL='redisjson-mte:6379' -e SQ_URL='https://rimini-sonar.dot.daimler.com' -e SQ_TOKEN=${{secrets.SQ_TOKEN}} ashwinraj18/mte-api:1.0
             exit
