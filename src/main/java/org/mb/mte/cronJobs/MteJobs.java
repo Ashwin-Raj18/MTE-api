@@ -27,9 +27,10 @@ public class MteJobs {
         sonarQubeClient.sqMetricsByProject();
     }
 
-//    @Scheduled(cron = "*/50 * * * * *")
+    @Scheduled(cron = "*/50 * * * * *")
     public void mteJira() {
         jiraClient.jiraProjects();
+        jiraClient.jiraIssuesProject();
 
     }
 
