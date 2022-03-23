@@ -30,6 +30,7 @@ public class MteJobs {
     @Scheduled(cron = "*/50 * * * * *")
     public void mteJira() {
         jiraClient.jiraProjects();
+        jiraClient.jiraIssuesProject();
 
     }
 
