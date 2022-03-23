@@ -9,6 +9,7 @@ import org.mb.mte.util.RedisKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -26,23 +27,25 @@ public class JiraClient {
     @Autowired
     MteProperties props;
 
-    private String jiraProjectsUri = "project/search";
-    private String jiraIssues = "search?jql=";
+    private String jiraProjectsUrl = "project/search?maxResults=1000&startAt=0";
+    private String jiraIssuesUrl = "search?jql=";
 
     private String webClientGet(String uri) {
         WebClient client = WebClient.create("https://tweakers.atlassian.net/rest/api/3/");
         return client.get()
                 .uri(uri)
-                .headers(headers -> headers.setBasicAuth("ajaykumarsh022@gmail.com","qnXJCMZtckMdsI1VJMDf2608"))
+                .headers(headers -> headers.setBasicAuth("ajaykumarsh022@gmail.com","IsPkacOAMsOy1RNjU07y4750"))
                 .retrieve()
                 .bodyToMono(String.class).block();
     }
 
     public void jiraProjects() {
-        String response = webClientGet(jiraProjectsUri);
+        String response = webClientGet(jiraProjectsUrl);
         logger.info("api response from JIRA:{}",response);
+        System.out.println(response);
         JSONArray filteredArr=filterJiraProjects(response);
         String jiraProjectsJson = JsonFormatUtil.getJson(filteredArr.toString());
+        logger.info("Filtered Projects-----------------------"+jiraProjectsJson);
         redisRepository.addData(RedisKeys.  jiraProjectsKey,jiraProjectsJson);
     }
 
@@ -60,7 +63,8 @@ public class JiraClient {
     }
 
     public void jiraIssuesProject() {
-        String response = webClientGet(jiraIssues);
+        String response = webClientGet(jiraIssuesUrl);
+        logger.info("response from jira Issues: {}",response);
         JSONObject jsonObject=filterJiraIssues(response);
         String jiraIssues = jsonObject.toString();
         System.out.print(jiraIssues);
