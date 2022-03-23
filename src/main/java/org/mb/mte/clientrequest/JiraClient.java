@@ -6,6 +6,8 @@ import org.mb.mte.repository.RedisRepository;
 import org.mb.mte.util.JsonFormatUtil;
 import org.mb.mte.util.MteProperties;
 import org.mb.mte.util.RedisKeys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,6 +18,8 @@ import java.util.Map;
 @Component
 public class JiraClient {
 
+
+    private static final Logger logger = LoggerFactory.getLogger(JiraClient.class);
     @Autowired
     RedisRepository redisRepository;
 
@@ -29,19 +33,21 @@ public class JiraClient {
         WebClient client = WebClient.create("https://tweakers.atlassian.net/rest/api/3/");
         return client.get()
                 .uri(uri)
-                .headers(headers -> headers.setBasicAuth("ashwinrajrao@gmail.com","Zqx5XPHy6zfEF5fHqK717D83"))
+                .headers(headers -> headers.setBasicAuth("ajaykumarsh022@gmail.com","qnXJCMZtckMdsI1VJMDf2608"))
                 .retrieve()
                 .bodyToMono(String.class).block();
     }
 
     public void jiraProjects() {
         String response = webClientGet(jiraProjectsUri);
+        logger.info("api response from JIRA:{}",response);
         JSONArray filteredArr=filterJiraProjects(response);
         String jiraProjectsJson = JsonFormatUtil.getJson(filteredArr.toString());
         redisRepository.addData(RedisKeys.  jiraProjectsKey,jiraProjectsJson);
     }
 
     private JSONArray filterJiraProjects(String response) {
+        logger.info("filtering of Jira Projects Started for {}",response);
         JSONObject json = new JSONObject(response);
         JSONArray projArr = json.getJSONArray("values");
         JSONArray FinalProjArray= new JSONArray();
@@ -57,6 +63,7 @@ public class JiraClient {
         String response = webClientGet(jiraIssues);
         JSONObject jsonObject=filterJiraIssues(response);
         String jiraIssues = jsonObject.toString();
+        System.out.print(jiraIssues);
         redisRepository.addData(RedisKeys.  jiraIssuesKey,jiraIssues);
     }
 
