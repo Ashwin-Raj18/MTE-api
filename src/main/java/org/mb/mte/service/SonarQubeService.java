@@ -28,7 +28,7 @@ public class SonarQubeService {
        for(Object obj: jArr){
            JSONObject measureObj = (JSONObject) obj;
            Map<String, String> measureMap = new HashMap();
-           measureMap.put("metric",measureObj.getString("metric"));
+           measureMap.put("metric",measureObj.getString("metric").replace("_"," "));
            if(measureObj.has("period")){
                measureMap.put("value",measureObj.getJSONObject("period").getString("value"));
            }
@@ -37,6 +37,7 @@ public class SonarQubeService {
            }
            listMeasures.add(new JSONObject(measureMap));
        }
+
        mainMap.put("measures",listMeasures);
        return new JSONObject(mainMap);
     }

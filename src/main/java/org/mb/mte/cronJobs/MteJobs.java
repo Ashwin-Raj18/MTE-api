@@ -16,10 +16,10 @@ public class MteJobs {
     SonarQubeClient sonarQubeClient;
 
     @Autowired
-    BlackDuckService blackDuckService;
+    JiraClient jiraClient;
 
     @Autowired
-    JiraClient jiraClient;
+    BlackDuckService blackDuckService;
 
     @Scheduled(cron = "*/50 * * * * *")
     public void mteSq() {
@@ -33,7 +33,6 @@ public class MteJobs {
         jiraClient.jiraIssuesProject();
 
     }
-
 
     @Scheduled(cron = "*/50 * * * * *")
     public void mteBd() throws Exception {

@@ -37,7 +37,6 @@ public class BlackDuckService {
     @Autowired
     RedisRepository redisRepository;
 
-    private final String baseUrl = "https://bdscan.daimler.com";
 
     public List<String> getBlackDuckProjectNames() throws Exception {
         //authenticate and get bearer token
