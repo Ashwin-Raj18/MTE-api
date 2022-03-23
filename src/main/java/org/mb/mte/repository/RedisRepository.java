@@ -24,25 +24,26 @@ public class RedisRepository {
     MteProperties props;
 
 
-    private RedisJSONClient redisInit(){
+    private RedisJSONClient redisInit() {
         Config config = new Config();
         String url = "redis://"+props.getRedisUrl();
+//        String url = "redis://" + "35.158.237.207:6379";
         logger.info("Redis url: {}", url);
         config.useSingleServer().setAddress(url);
         return new RedisJSONClient(config);
     }
 
-    public void addData(String key, String value){
-
+    public void addData(String key, String value) {
+        logger.info("adding data to redis");
         RedisJSONClient redisJSONClient = redisInit();
         RedisJSON redisJSON = redisJSONClient.getRedisJSON();
-        Map<String,String> map = new HashMap<>();
-        map.put(key,value);
+        Map<String, String> map = new HashMap<>();
+        map.put(key, value);
         redisJSON.set(key, SetArgs.Builder.create(".", GsonUtils.toJson(map)));
         redisJSONClient.shutdown();
     }
 
-    public String getData(String key){
+    public String getData(String key) {
         RedisJSONClient redisJSONClient = redisInit();
         RedisJSON redisJSON = redisJSONClient.getRedisJSON();
         Map<String, Object> actual = redisJSON.get(key, Map.class, new GetArgs().path(".").indent("\t").newLine("\n").space(" "));
