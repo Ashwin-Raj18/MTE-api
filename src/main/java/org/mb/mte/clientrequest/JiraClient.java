@@ -27,14 +27,14 @@ public class JiraClient {
     @Autowired
     MteProperties props;
 
-    private String jiraProjectsUrl = "project/search?maxResults=1000&startAt=0";
-    private String jiraIssuesUrl = "search?jql=";
+    private String jiraProjectsUrl = "/rest/api/3/project/search?maxResults=1000&startAt=0";
+    private String jiraIssuesUrl = "/rest/api/3/search?jql=";
 
     private String webClientGet(String uri) {
-        WebClient client = WebClient.create("https://tweakers.atlassian.net/rest/api/3/");
+        WebClient client = WebClient.create(props.getJiraUrl());
         return client.get()
                 .uri(uri)
-                .headers(headers -> headers.setBasicAuth("ajaykumarsh022@gmail.com","IsPkacOAMsOy1RNjU07y4750"))
+                .headers(headers -> headers.setBasicAuth(props.getJiraUsername(),props.getJiraToken()))
                 .retrieve()
                 .bodyToMono(String.class).block();
     }
@@ -46,7 +46,7 @@ public class JiraClient {
         JSONArray filteredArr=filterJiraProjects(response);
         String jiraProjectsJson = JsonFormatUtil.getJson(filteredArr.toString());
         logger.info("Filtered Projects-----------------------"+jiraProjectsJson);
-        redisRepository.addData(RedisKeys.  jiraProjectsKey,jiraProjectsJson);
+        redisRepository.addData(RedisKeys.jiraProjectsKey,jiraProjectsJson);
     }
 
     private JSONArray filterJiraProjects(String response) {
@@ -68,7 +68,7 @@ public class JiraClient {
         JSONObject jsonObject=filterJiraIssues(response);
         String jiraIssues = jsonObject.toString();
         System.out.print(jiraIssues);
-        redisRepository.addData(RedisKeys.  jiraIssuesKey,jiraIssues);
+        redisRepository.addData(RedisKeys.jiraIssuesKey,jiraIssues);
     }
 
     private JSONObject filterJiraIssues(String response) {

@@ -28,7 +28,9 @@ public class MteJobs {
     @Scheduled(cron = "*/50 * * * * *")
     public void mteSq() {
         sonarQubeClient.sqProjects();
-        sonarQubeClient.sqMetricsByProject();
+        sonarQubeClient.sqMetrics();
+        //sonarQubeClient.sqIssues();
+        sonarQubeClient.sqHotSpots();
     }
 
     @Scheduled(cron = "*/50 * * * * *")
