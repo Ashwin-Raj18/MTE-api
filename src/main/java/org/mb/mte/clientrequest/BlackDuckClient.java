@@ -15,7 +15,7 @@ public class BlackDuckClient {
     private static final Logger logger = LoggerFactory.getLogger(RedisRepository.class);
 
     @Autowired
-    private WebClient.Builder webClient;
+    private WebClient webClient;
 
     private String bdBaseUrl = "https://bdscan.daimler.com";
     private String bdToken = "ODc3NThiYWUtY2Y2Ni00ZTE5LWE0ZGUtOGVlYWVjM2I0MGEwOmIxMDE3M2U5LTY0ZjYtNDM3Mi1hZmJjLTg3NWQyZDU3YWNjZg==";
@@ -27,7 +27,7 @@ public class BlackDuckClient {
      */
     public String authenticate() throws Exception{
         String URL = bdBaseUrl  + "/api/tokens/authenticate";
-        ResponseEntity<String> response = this.webClient.build().post()
+        ResponseEntity<String> response = webClient.post()
                 .uri(URL)
                 .header("Authorization", "token "+bdToken)
                 .retrieve()
@@ -46,7 +46,7 @@ public class BlackDuckClient {
 
     public String getListOfProjects(String auth) throws Exception {
         String URL = bdBaseUrl  + "/api/projects";
-        ResponseEntity<String> response = this.webClient.build().get()
+        ResponseEntity<String> response = webClient.get()
                 .uri(URL)
                 .header("Authorization", "Bearer "+auth)
                 .retrieve()
@@ -64,7 +64,7 @@ public class BlackDuckClient {
     }
 
     public ResponseEntity<String> getVersionDetails(String auth, String VersionUrl){
-        ResponseEntity<String> response = this.webClient.build().get()
+        ResponseEntity<String> response = webClient.get()
                 .uri(VersionUrl)
                 .header("Authorization", "Bearer " + auth)
                 .retrieve()

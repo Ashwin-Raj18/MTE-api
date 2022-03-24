@@ -29,7 +29,7 @@ public class MteJobs {
     public void mteSq() {
         sonarQubeClient.sqProjects();
         sonarQubeClient.sqMetrics();
-        //sonarQubeClient.sqIssues();
+        sonarQubeClient.sqIssues();
         sonarQubeClient.sqHotSpots();
     }
 

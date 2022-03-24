@@ -18,7 +18,7 @@ import java.util.List;
 public class SonarQubeClient {
 
     @Autowired
-    WebClient.Builder webClient;
+    WebClient webClient;
 
     @Autowired
     RedisRepository redisRepository;
@@ -38,7 +38,7 @@ public class SonarQubeClient {
 
     private String webClientGet(String uri){
         String url = props.getSqUrl()+uri;
-        return webClient.build().get()
+        return webClient.get()
                 .uri(url)
                 .headers(headers -> headers.setBasicAuth(props.getSqToken(), ""))
                 .retrieve()
