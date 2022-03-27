@@ -1,6 +1,7 @@
 package org.mb.mte.clientrequest;
 
 import org.mb.mte.repository.RedisRepository;
+import org.mb.mte.util.MteProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class BlackDuckClient {
     @Autowired
     private WebClient webClient;
 
-    private String bdBaseUrl = "https://bdscan.daimler.com";
-    private String bdToken = "ODc3NThiYWUtY2Y2Ni00ZTE5LWE0ZGUtOGVlYWVjM2I0MGEwOmIxMDE3M2U5LTY0ZjYtNDM3Mi1hZmJjLTg3NWQyZDU3YWNjZg==";
+    @Autowired
+    MteProperties props;
 
     /**
      * authenticate with the token and provides JWT
@@ -26,10 +27,10 @@ public class BlackDuckClient {
      * @throws Exception
      */
     public String authenticate() throws Exception{
-        String URL = bdBaseUrl  + "/api/tokens/authenticate";
+        String URL = props.getBdUrl()  + "/api/tokens/authenticate";
         ResponseEntity<String> response = webClient.post()
                 .uri(URL)
-                .header("Authorization", "token "+bdToken)
+                .header("Authorization", "token "+props.getBdToken())
                 .retrieve()
                 .onStatus(
                         status -> status.value() != 200,
@@ -45,7 +46,7 @@ public class BlackDuckClient {
     }
 
     public String getListOfProjects(String auth) throws Exception {
-        String URL = bdBaseUrl  + "/api/projects";
+        String URL = props.getBdUrl()  + "/api/projects";
         ResponseEntity<String> response = webClient.get()
                 .uri(URL)
                 .header("Authorization", "Bearer "+auth)
