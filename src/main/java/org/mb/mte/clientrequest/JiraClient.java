@@ -41,16 +41,16 @@ public class JiraClient {
 
     public void jiraProjects() {
         String response = webClientGet(jiraProjectsUrl);
-        logger.info("api response from JIRA:{}",response);
+        //logger.info("api response from JIRA:{}",response);
         System.out.println(response);
         JSONArray filteredArr=filterJiraProjects(response);
         String jiraProjectsJson = JsonFormatUtil.getJson(filteredArr.toString());
-        logger.info("Filtered Projects-----------------------"+jiraProjectsJson);
+        //logger.info("Filtered Projects-----------------------"+jiraProjectsJson);
         redisRepository.addData(RedisKeys.jiraProjectsKey,jiraProjectsJson);
     }
 
     private JSONArray filterJiraProjects(String response) {
-        logger.info("filtering of Jira Projects Started for {}",response);
+        //logger.info("filtering of Jira Projects Started for {}",response);
         JSONObject json = new JSONObject(response);
         JSONArray projArr = json.getJSONArray("values");
         JSONArray FinalProjArray= new JSONArray();
@@ -64,7 +64,7 @@ public class JiraClient {
 
     public void jiraIssuesProject() {
         String response = webClientGet(jiraIssuesUrl);
-        logger.info("response from jira Issues: {}",response);
+        //logger.info("response from jira Issues: {}",response);
         JSONObject jsonObject=filterJiraIssues(response);
         String jiraIssues = jsonObject.toString();
         System.out.print(jiraIssues);
