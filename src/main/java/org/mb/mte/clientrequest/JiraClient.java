@@ -75,12 +75,14 @@ public class JiraClient {
 
         Map<String, String> map = new HashMap<String, String>();
 
-        JSONObject FJsonObj = new JSONObject();
+
         JSONArray FJsonArr = new JSONArray();
 
         JSONObject json = new JSONObject(response);
         JSONArray jArr = json.getJSONArray("issues");
         for (Object obj : jArr) {
+            JSONObject FJsonObj = new JSONObject();
+//            logger.info(++i + "------------------>>>>>Array val ="+obj);
             JSONObject issueObj = (JSONObject) obj;
 
             map.put("key", issueObj.getString("key"));
@@ -139,7 +141,6 @@ public class JiraClient {
             String reporter = childrens.getJSONObject("reporter").getString("displayName");
 
             //Filling Field Object
-            jsonFields.put("issueType", jsonIssueType);
             jsonFields.put("projectName", projectName);
             jsonFields.put("sprint", jsonSprint);
             jsonFields.put("priority", priority);
