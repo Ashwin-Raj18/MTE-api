@@ -58,35 +58,40 @@ public class BlackDuckClient {
         return response.getBody();
     }
 
+    private String webClientPost(String url, String authHeader){
+        ResponseEntity<String> response = webClient.post()
+                .uri(url)
+                .header("Authorization", authHeader)
+                .retrieve()
+                .onStatus(
+                        status -> status.value() != 200,
+                        clientResponse -> Mono.empty()
+                )
+                .toEntity(String.class)
+                .block();
+
+        return response.getBody();
+    }
+
 
     public void blackDuckProjects() throws Exception {
         //authenticate and get bearer token
         String authUrl = props.getBdUrl()  + bdAuthUri;
         String tokenHeader = "token "+props.getBdToken();
-        String response = webClientGet(authUrl,tokenHeader);
+        String response = webClientPost(authUrl,tokenHeader);
         String auth = getKeyValueJsonString(response, "bearerToken");
         //call api to get list of project
         String url = props.getBdUrl()  + bdProjectsUri;
         String authHeader = "Bearer "+auth;
         String projects = webClientGet(url,authHeader);
-        JSONObject jObj = new JSONObject(projects);
-        JSONArray jArrItems = jObj.getJSONArray("items");
-        List<String> bdProjects = new ArrayList();
-        for(Object jItem: jArrItems){
-            JSONObject item = (JSONObject)jItem;
-            bdProjects.add(item.getString("name"));
-        }
-        redisRepository.addData(RedisKeys.blackDuckProjectsKey,bdProjects.toString());
+        redisRepository.addData(RedisKeys.blackDuckProjectsKey,projects.toString());
     }
 
     public void bdMetrics() throws Exception {
         String bdData = getBlackDuckData();
         String filteredBdData= getRequiredBlackDuckData(bdData);
-        List<String> projects = getListOfprojects(bdData);
-        JSONArray projectsJson = new JSONArray(projects);
 
         redisRepository.addData(RedisKeys.blackDuckMetricsKey,filteredBdData);
-        redisRepository.addData(RedisKeys.blackDuckProjectsKey,projectsJson.toString());
         //add individual project data
 
         JSONArray jArrItems = new JSONArray(filteredBdData);
@@ -95,12 +100,12 @@ public class BlackDuckClient {
             String projName = item.getString("name");
             redisRepository.addData(RedisKeys.blackDuckMetricsKey+"_"+projName, item.toString());
         }
-        logger.info(">>>>>>>>>PUSHED BLACKDUCK DATA TO REDIS>>>>>>>");
+        logger.info(">>>>>>>>>PUSHED BLACKDUCK METRICS TO REDIS>>>>>>>");
     }
 
     public String getBlackDuckData() throws Exception {
 
-        String projects = blackDuckService.getBdProjects();
+        String projects = blackDuckService.getProjectsJson();
         //get version details of each project
         String bdData = getVersionDetails( projects);
         //String bdData =getRequiredBlackDuckData(bdData);
@@ -110,7 +115,7 @@ public class BlackDuckClient {
     private String getVersionDetails( String projects )  throws Exception{
         String authUrl = props.getBdUrl()  + bdAuthUri;
         String tokenHeader = "token "+props.getBdToken();
-        String auth = getKeyValueJsonString(webClientGet(authUrl,tokenHeader), "bearerToken");
+        String auth = getKeyValueJsonString(webClientPost(authUrl,tokenHeader), "bearerToken");
         String authHeader = "Bearer "+auth;
         JsonObject project = getJsonObject(projects);
         JsonArray items = (JsonArray) project.get("items");
