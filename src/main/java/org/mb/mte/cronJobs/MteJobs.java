@@ -26,7 +26,7 @@ public class MteJobs {
     @Autowired
     BlackDuckClient blackDuckClient;
 
-    //@Scheduled(cron = "*/50 * * * * *")
+    @Scheduled(cron = "*/50 * * * * *")
     public void mteSq() {
         sonarQubeClient.sqProjects();
         sonarQubeClient.sqMetrics();
@@ -34,9 +34,8 @@ public class MteJobs {
         sonarQubeClient.sqHotSpots();
     }
 
-    //@Scheduled(cron = "*/50 * * * * *")
+    @Scheduled(cron = "*/50 * * * * *")
     public void mteJira() {
-        logger.info("Jira job started");
         jiraClient.jiraProjects();
         jiraClient.jiraIssuesProject();
 
