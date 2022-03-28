@@ -42,7 +42,7 @@ public class JiraClient {
     public void jiraProjects() {
         String response = webClientGet(jiraProjectsUrl);
         //logger.info("api response from JIRA:{}",response);
-        System.out.println(response);
+        //System.out.println(response);
         JSONArray filteredArr=filterJiraProjects(response);
         String jiraProjectsJson = JsonFormatUtil.getJson(filteredArr.toString());
         //logger.info("Filtered Projects-----------------------"+jiraProjectsJson);
@@ -67,7 +67,7 @@ public class JiraClient {
         //logger.info("response from jira Issues: {}",response);
         JSONObject jsonObject=filterJiraIssues(response);
         String jiraIssues = jsonObject.toString();
-        System.out.print(jiraIssues);
+        //System.out.print(jiraIssues);
         redisRepository.addData(RedisKeys.jiraIssuesKey,jiraIssues);
     }
 
