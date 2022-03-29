@@ -53,4 +53,35 @@ public class SonarQubeService {
         }
         return sqProjects;
     }
+
+    public JSONObject getSqIssues(String project){
+        JSONObject jsonObj = new JSONObject(redisRepository.getData(RedisKeys.sqIssuesKey+"_"+project));
+        JSONArray jArr = jsonObj.getJSONArray("issues");
+
+        Map<String, Object> mainMap = new HashMap();
+        mainMap.put("project",project);
+        List<JSONObject> listIssues = new ArrayList<>();
+        for(Object obj: jArr){
+            JSONObject issueObj = (JSONObject) obj;
+            Map<String, Object> issueMap = new HashMap();
+            issueMap.put("severity",issueObj.getString("severity"));
+            issueMap.put("component",issueObj.getString("component"));
+            issueMap.put("line",issueObj.getInt("line"));
+            issueMap.put("message",issueObj.getString("message"));
+            issueMap.put("effort",issueObj.getString("effort"));
+            issueMap.put("author",issueObj.getString("author"));
+            issueMap.put("type",issueObj.getString("type"));
+            issueMap.put("creationDate",issueObj.getString("creationDate"));
+            issueMap.put("scope",issueObj.getString("scope"));
+            listIssues.add(new JSONObject(issueMap));
+        }
+        mainMap.put("issues",listIssues);
+        return new JSONObject(mainMap);
+
+    }
+
+    public String getSqHotSpots(String project){
+        String hotSpotStr =  redisRepository.getData(RedisKeys.sqHotspotKey+"_"+project);
+        return hotSpotStr;
+    }
 }

@@ -25,4 +25,16 @@ public class SonarQubeController {
         JSONObject res = sonarQubeService.getSqMetricsByProject(project);
         return res.toString();
     }
+
+    @GetMapping("/sqIssuesByProject")
+    public String getSqIssues(@RequestParam String project){
+        JSONObject res = sonarQubeService.getSqIssues(project);
+        return res.toString();
+    }
+
+    @GetMapping("/sqHotspotsByProject")
+    public String setHotSpots(@RequestParam String project){
+        String res = sonarQubeService.getSqHotSpots(project);
+        return res;
+    }
 }
