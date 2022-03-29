@@ -67,7 +67,6 @@ public class JiraClient {
         logger.info("response from jira Issues: {}",response);
         JSONObject jsonObject=filterJiraIssues(response);
         String jiraIssues = jsonObject.toString();
-        System.out.print(jiraIssues);
         redisRepository.addData(RedisKeys.jiraIssuesKey,jiraIssues);
     }
 

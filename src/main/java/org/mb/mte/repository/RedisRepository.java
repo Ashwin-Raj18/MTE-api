@@ -27,7 +27,7 @@ public class RedisRepository {
     private RedisJSONClient redisInit() {
         Config config = new Config();
         String url = "redis://"+props.getRedisUrl();
-//        String url = "redis://" + "35.158.237.207:6379";
+//        String url = "redis://" + "52.59.112.254:6379";
         logger.info("Redis url: {}", url);
         config.useSingleServer().setAddress(url);
         return new RedisJSONClient(config);
