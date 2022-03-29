@@ -1,13 +1,16 @@
 package org.mb.mte.controller;
 
+import org.json.JSONObject;
 import org.mb.mte.service.JiraService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class JiraController {
@@ -40,9 +43,10 @@ public class JiraController {
         return jiraService.getJiraSprintsIssues(project,sprint);
     }
 
-//    public List<Object> fetchMetricsCurrentSprint(@RequestParam String project){
-//        return jiraService.getJiraSprintMetrics(project);
-//    }
+    @GetMapping("project/metrics")
+    public ResponseEntity<Map<String,Object>> fetchMetricsCurrentSprint(@RequestParam String project){
+        return ResponseEntity.ok().body(jiraService.getJiraSprintMetrics(project));
+    }
 
 
 }
