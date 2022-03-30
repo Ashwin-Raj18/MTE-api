@@ -21,8 +21,18 @@ public class BlackDuckController {
     }
 
     @GetMapping("/bdMetricsByProject")
-    public String gwtSqMetricsByProj(@RequestParam String project) {
+    public String getSqMetricsByProj(@RequestParam String project) {
         return blackDuckService.getBdMetricsByProject(project);
+    }
+
+    @GetMapping("/bdComponentByProject")
+    public String getBdComponent(@RequestParam String project){
+        return blackDuckService.getBdComponentsByProject(project);
+    }
+
+    @GetMapping("/bdVulsByProject")
+    public String getBdVul(@RequestParam String project){
+        return blackDuckService.getBdVulByProject(project);
     }
 
 }

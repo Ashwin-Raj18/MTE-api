@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.mb.mte.util.JsonFormatUtil.getJsonObject;
 import static org.mb.mte.util.JsonFormatUtil.getKeyValueJsonString;
 
@@ -39,6 +36,7 @@ public class BlackDuckClient {
     @Autowired
     BlackDuckService blackDuckService;
 
+    private String bearerToken;
     private String bdAuthUri="/api/tokens/authenticate";
     private String bdProjectsUri = "/api/projects";
 
@@ -73,28 +71,30 @@ public class BlackDuckClient {
         return response.getBody();
     }
 
-
-    public void blackDuckProjects() throws Exception {
+    public void bdAuthBearerToken(){
         //authenticate and get bearer token
         String authUrl = props.getBdUrl()  + bdAuthUri;
         String tokenHeader = "token "+props.getBdToken();
         String response = webClientPost(authUrl,tokenHeader);
-        String auth = getKeyValueJsonString(response, "bearerToken");
-        //call api to get list of project
+        this.bearerToken = "Bearer "+getKeyValueJsonString(response, "bearerToken");
+    }
+
+
+    public void blackDuckProjects() throws Exception {
         String url = props.getBdUrl()  + bdProjectsUri;
-        String authHeader = "Bearer "+auth;
-        String projects = webClientGet(url,authHeader);
+        String projects = webClientGet(url,this.bearerToken);
         redisRepository.addData(RedisKeys.blackDuckProjectsKey,projects.toString());
+        logger.info(">>>>>>>>>PUSHED BLACKDUCK PROJECTS TO REDIS>>>>>>>");
     }
 
     public void bdMetrics() throws Exception {
-        String bdData = getBlackDuckData();
-        String filteredBdData= getRequiredBlackDuckData(bdData);
+        String projects = blackDuckService.getAllProjectsJson();
+        String bdVersionData = getVersionData( projects);;
+        String bdProfileData = getBdProfileData(bdVersionData);
+        redisRepository.addData(RedisKeys.blackDuckMetricsKey,bdProfileData);
 
-        redisRepository.addData(RedisKeys.blackDuckMetricsKey,filteredBdData);
         //add individual project data
-
-        JSONArray jArrItems = new JSONArray(filteredBdData);
+        JSONArray jArrItems = new JSONArray(bdProfileData);
         for(Object jItem: jArrItems){
             JSONObject item = (JSONObject)jItem;
             String projName = item.getString("name");
@@ -103,20 +103,51 @@ public class BlackDuckClient {
         logger.info(">>>>>>>>>PUSHED BLACKDUCK METRICS TO REDIS>>>>>>>");
     }
 
-    public String getBlackDuckData() throws Exception {
 
-        String projects = blackDuckService.getProjectsJson();
-        //get version details of each project
-        String bdData = getVersionDetails( projects);
-        //String bdData =getRequiredBlackDuckData(bdData);
-        return bdData;
+    public  void bdComponents(){
+
+        JSONArray projectsArry = new JSONArray(blackDuckService.getBdProjects());
+        for(Object project: projectsArry){
+            String profileStr = blackDuckService.getBdMetricsByProject((String) project);
+            JSONArray profileItemsArr = new JSONObject(profileStr).getJSONObject("versions").getJSONArray("items");
+            JSONArray finalCompArr = new JSONArray();
+            for(Object profile:profileItemsArr){
+                JSONObject jo = (JSONObject)profile;
+                String compHref = jo.getString("VersionHref")+"/components?offset=0&limit=100";
+                String bdComp = webClientGet(compHref,this.bearerToken);
+                JSONObject compObj  = new JSONObject();
+                compObj.put("component",new JSONObject(bdComp));
+                compObj.put("createdAt",jo.getString("createdAt"));
+                compObj.put("versionName",jo.getString("versionName"));
+                finalCompArr.put(compObj);
+            }
+            redisRepository.addData(RedisKeys.blackduckComponentKey+"_"+(String)project,finalCompArr.toString());
+        }
     }
 
-    private String getVersionDetails( String projects )  throws Exception{
-        String authUrl = props.getBdUrl()  + bdAuthUri;
-        String tokenHeader = "token "+props.getBdToken();
-        String auth = getKeyValueJsonString(webClientPost(authUrl,tokenHeader), "bearerToken");
-        String authHeader = "Bearer "+auth;
+    public  void bdVulnerabilities(){
+        JSONArray projectsArry = new JSONArray(blackDuckService.getBdProjects());
+        for(Object project: projectsArry){
+            String profileStr = blackDuckService.getBdMetricsByProject((String) project);
+            JSONArray profileItemsArr = new JSONObject(profileStr).getJSONObject("versions").getJSONArray("items");
+            JSONArray finalCompArr = new JSONArray();
+            for(Object profile:profileItemsArr){
+                JSONObject jo = (JSONObject)profile;
+                String vulHref = jo.getString("VersionHref")+"/vulnerability-bom?offset=0&limit=100";
+                String bdVul = webClientGet(vulHref,this.bearerToken);
+                JSONObject vulObj  = new JSONObject();
+                vulObj.put("vul",new JSONObject(bdVul));
+                vulObj.put("createdAt",jo.getString("createdAt"));
+                vulObj.put("versionName",jo.getString("versionName"));
+                finalCompArr.put(vulObj);
+            }
+            redisRepository.addData(RedisKeys.blackduckVulKey+"_"+(String)project,finalCompArr.toString());
+        }
+    }
+
+
+    private String getVersionData( String projects )  throws Exception{
+
         JsonObject project = getJsonObject(projects);
         JsonArray items = (JsonArray) project.get("items");
         JsonArray updateitems = new JsonArray();
@@ -124,7 +155,7 @@ public class BlackDuckClient {
             JsonObject itemJson = getJsonObject(item.toString());
             JsonObject metaData = itemJson.getAsJsonObject("_meta");
             String URL = getKeyValueJsonString(metaData.toString() , "href") + "/versions";
-            String response = webClientGet(URL, authHeader);
+            String response = webClientGet(URL, this.bearerToken);
             itemJson.add("versions" ,getJsonObject(response));
             updateitems.add(itemJson);
         });
@@ -134,7 +165,7 @@ public class BlackDuckClient {
         return project.toString();
     }
 
-    private String getRequiredBlackDuckData(String bdData) {
+    private String getBdProfileData(String bdData) {
         JSONObject jObj = new JSONObject(bdData);
         JSONArray jArrItems = jObj.getJSONArray("items");
         JSONArray jNewArrItems = new JSONArray();
@@ -160,6 +191,8 @@ public class BlackDuckClient {
                     newVersionItem.put("licenseRiskProfile", versionItem.get("licenseRiskProfile"));
                 if(versionItem.has("operationalRiskProfile"))
                     newVersionItem.put("operationalRiskProfile", versionItem.get("operationalRiskProfile"));
+                if(versionItem.has("_meta"))
+                    newVersionItem.put("VersionHref",versionItem.getJSONObject("_meta").getString("href"));
                 jNewVersionItems.put(newVersionItem);
             }
             version.remove("appliedFilters");
@@ -173,17 +206,6 @@ public class BlackDuckClient {
         }
 
         return jNewArrItems.toString();
-    }
-
-    private List<String> getListOfprojects(String projects){
-        JSONObject jObj = new JSONObject(projects);
-        JSONArray jArrItems = jObj.getJSONArray("items");
-        List<String> bdProjects = new ArrayList();
-        for(Object jItem: jArrItems){
-            JSONObject item = (JSONObject)jItem;
-            bdProjects.add(item.getString("name"));
-        }
-        return bdProjects;
     }
 
 }

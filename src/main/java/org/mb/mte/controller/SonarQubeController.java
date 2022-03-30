@@ -21,7 +21,7 @@ public class SonarQubeController {
     }
 
     @GetMapping("/sqMetricsByProject")
-    public String gwtSqMetricsByProj(@RequestParam String project) {
+    public String getSqMetricsByProj(@RequestParam String project) {
         JSONObject res = sonarQubeService.getSqMetricsByProject(project);
         return res.toString();
     }
@@ -33,8 +33,7 @@ public class SonarQubeController {
     }
 
     @GetMapping("/sqHotspotsByProject")
-    public String setHotSpots(@RequestParam String project){
-        String res = sonarQubeService.getSqHotSpots(project);
-        return res;
+    public String getHotSpots(@RequestParam String project){
+        return sonarQubeService.getSqHotSpots(project);
     }
 }

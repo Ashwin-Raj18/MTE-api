@@ -3,7 +3,6 @@ package org.mb.mte.cronJobs;
 import org.mb.mte.clientrequest.BlackDuckClient;
 import org.mb.mte.clientrequest.JiraClient;
 import org.mb.mte.clientrequest.SonarQubeClient;
-import org.mb.mte.service.BlackDuckService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class MteJobs {
     @Autowired
     BlackDuckClient blackDuckClient;
 
-    @Scheduled(cron = "*/50 * * * * *")
+    @Scheduled(cron = "*/10 * * * * *")
     public void mteSq() {
         sonarQubeClient.sqProjects();
         sonarQubeClient.sqMetrics();
@@ -34,7 +33,7 @@ public class MteJobs {
         sonarQubeClient.sqHotSpots();
     }
 
-    @Scheduled(cron = "*/50 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void mteJira() {
         jiraClient.jiraProjects();
         jiraClient.jiraIssuesProject();
@@ -43,7 +42,10 @@ public class MteJobs {
 
     @Scheduled(cron = "*/50 * * * * *")
     public void mteBd() throws Exception {
+        blackDuckClient.bdAuthBearerToken();
         blackDuckClient.blackDuckProjects();
         blackDuckClient.bdMetrics();
+        blackDuckClient.bdComponents();
+        blackDuckClient.bdVulnerabilities();
     }
 }
