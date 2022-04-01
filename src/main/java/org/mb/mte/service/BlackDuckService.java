@@ -22,7 +22,7 @@ public class BlackDuckService {
     RedisRepository redisRepository;
 
 
-    public String getBdProjects(){
+    public List<String>  getBdProjects(){
         String projects = getAllProjectsJson();
         JSONObject jObj = new JSONObject(projects);
         JSONArray jArrItems = jObj.getJSONArray("items");
@@ -31,7 +31,7 @@ public class BlackDuckService {
             JSONObject item = (JSONObject)jItem;
             bdProjects.add(item.getString("name"));
         }
-        return bdProjects.toString();
+        return bdProjects;
     }
 
 
