@@ -1,4 +1,4 @@
-# MTE
+# Performance Buddy
 ## _Monitor and Track Everything_
 
 Performance Buddy is a one-stop destination for all KPI and performance tracking. Instead of having to fiddle around multiple applications, the user just has to open a single dashboard to view all required KPIs.
