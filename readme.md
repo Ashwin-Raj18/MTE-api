@@ -10,8 +10,8 @@ MTE-api performs two functionalities.
 
 ## Architecture
 
+![mte-arch drawio](https://user-images.githubusercontent.com/63547678/161440240-e97b350e-883f-4a19-a2d9-fdc51622c28c.png)
 
-![mte-arch drawio](https://user-images.githubusercontent.com/63547678/161439345-18892c25-59b5-4145-b7b1-824057037765.png)
 
 
 ## Installation and configuration
