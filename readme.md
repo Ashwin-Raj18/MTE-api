@@ -19,12 +19,12 @@ MTE-api performs two functionalities.
 Performace buddy can be installed in all the platforms using Docker.
 We provide docker images for MTE-api and MTE-ui.
 
-###Create a docker network
+### Create a docker network
 ```sh
 docker network create mte-network
 ```
 
-###Deploy RedisJSON docker container
+### Deploy RedisJSON docker container
 
 ```sh
 #create volume for redisjson
@@ -33,7 +33,7 @@ docker volume create redis-mte-vol
 docker run -d -p 6379:6379 --name redisjson-mte --network mte-network -v redis-mte-vol:/data redislabs/rejson:latest
 ```
 
-###Deploy MTE-api docker container
+### Deploy MTE-api docker container
 
 _MTE-api needs environment varibles_
 
