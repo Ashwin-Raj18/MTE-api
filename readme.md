@@ -52,3 +52,10 @@ _MTE-api needs environment varibles_
 sudo docker run -d -p 8095:8080 --name mte-app --network mte-network -e REDIS_URL='redisjson-mte:6379' -e SQ_URL={YOUR_SONARQUBE URL} -e SQ_TOKEN={YOUR_SONARQUBE_TOKEN} -e JIRA_URL={YOUR_JIRA_URL} -e JIRA_USERNAME={YOUR_JIRA_USERNAME} -e JIRA_TOKEN={YOUR_JIRA_TOKEN} -e BD_URL={YOUR_BLACKDUCK_URL} -e BD_TOKEN={YOUR_BLACKDUCK_TOKEN} ashwinraj18/mte-api:1.0
 ```
 
+### Deploy MTE-ui docker container
+
+```sh
+sudo docker run -d -p 8090:8090 --name mte-ui ashwinraj18/mte-ui:1.0
+```
+
+
