@@ -19,12 +19,12 @@ public class BlackDuckController {
     private BlackDuckService blackDuckService;
 
     @GetMapping("/bdProjects")
-    public List<String> getBbProjects(){
+    public List<String> getBdprojects(){
         return blackDuckService.getBdProjects();
     }
 
     @GetMapping("/bdMetricsByProject")
-    public String getSqMetricsByProj(@RequestParam String project) {
+    public String getBdMetricsByProj(@RequestParam String project) {
         return blackDuckService.getBdMetricsByProject(project);
     }
 
